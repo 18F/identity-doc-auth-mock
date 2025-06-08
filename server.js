@@ -5,14 +5,14 @@ const app = express();
 
 // Import the id_plus route
 const idPlusRoute = require('./routes/id_plus');
-const docvRoute = require('./routes/docv_doc_request');
+const docvRoute = require('./routes/docv');
 
 app.use(express.json());
 
 // Mount the /id_plus route
 app.use('/id_plus/api/3.0/EmailAuthScore', idPlusRoute);
 
-app.use('/docv_doc_request/', docvRoute);
+app.use('/docv', docvRoute);
 
 if (process.env.NODE_ENV === 'production') {
   // Global error handler (add this before app.listen)

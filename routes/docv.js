@@ -16,7 +16,7 @@ function generateRandomString(length = 16) {
   return crypto.randomBytes(length).toString('hex');
 }
 
-router.post('/', async (req, res) => {
+router.post('/doc_request', async (req, res) => {
   if (!hasValidHeaders(req.headers)) {
     return res.status(400).json({ error: 'Missing or invalid headers' });
   }
