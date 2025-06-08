@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 
-// Import the docv/result route
-const docvRoute = require('./routes/docv');
+// Import the id_plus route
+const idPlusRoute = require('./routes/id_plus');
 
 app.use(express.json());
 
-// Mount the /docv/result route
-app.use('/docv', docvRoute);
+// Mount the /id_plus route
+app.use('/id_plus/api/3.0/EmailAuthScore', idPlusRoute);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
