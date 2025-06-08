@@ -4,10 +4,7 @@ const { documentVerification } = require('../services/id_plus');
 
 // Middleware to parse JSON bodies
 router.post('/', (req, res) => {
-  // console.log('Received request:', {
-  //   headers: req.headers,
-  //   body: req.body
-  // });
+  // Check for required headers
   const authHeader = req.headers['authorization'];
   const contentType = req.headers['content-type'];
 
@@ -17,14 +14,14 @@ router.post('/', (req, res) => {
 
   const { modules } = req.body;
 
-  if (Array.isArray(modules) &&
-    modules.length === 1 &&
-    modules[0] === "documentverification"
+  if (!Array.isArray(modules) &&
+    modules.length !== 1 &&
+    modules[0] !== "documentverification"
   ) {
-    return documentVerification(req, res);
+    return res.status(400).json({ error: 'Invalid modules' });
   }
   
-  return res.status(400).json({ error: 'Invalid modules' });
+  return documentVerification(req, res);
   
 });
 
