@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 const crypto = require('crypto');
 const { createClient } = require('redis');
 
@@ -38,21 +39,38 @@ router.post('/doc_request', async (req, res) => {
     return res.status(400).json({ error: 'Invalid or missing redirect method' });
   }
 
+  const docvTransactionToken = generateRandomString(12);
+
   try {
-    new URL(url);
+    if (url) {
+      new URL(url);
+      const data = {
+        event: {
+          created: new Date().toISOString(),
+          docvTransactionToken,
+          eventType: 'DOCUMENTS_UPLOADED',
+          referenceId: 'the-reference-id'
+        }
+      }
+      await axios.post(url, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': process.env.webhook_secret
+        }
+      });
+    }
   } catch (e) {
-    return res.status(400).json({ error: 'Invalid or missing url' });
+    return res.status(400).json({ error: 'Invalid redirect url' });
   }
 
   // Store a record in Redis with a 60-minute expiration
-  const key = generateRandomString(12);
   const value = JSON.stringify({ documentType, redirect });
-  await redisClient.setEx(key, 60 * 60, value); // 3600 seconds = 60 minutes
+  await redisClient.setEx(docvTransactionToken, 60 * 60, value); // 3600 seconds = 60 minutes
 
   const domain = process.env.domain || 'http://localhost:3001';
-  const path = `/docv/app/${key}`;
+  const path = `/docv/app/${docvTransactionToken}`;
   const appUrl = `${domain}${path}`;
-  return res.status(200).json({ data: { url: appUrl, docvTransactonToken: key } });
+  return res.status(200).json({ data: { url: appUrl, docvTransactionToken } });
 });
 
 module.exports = router;
