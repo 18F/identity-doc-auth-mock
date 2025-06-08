@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const crypto = require('crypto');
 const { createClient } = require('redis');
+const { authorized } = require('../services/id_plus');
 
 const redisClient = createClient();
 redisClient.connect().catch(console.error);
@@ -20,6 +21,10 @@ function generateRandomString(length = 16) {
 router.post('/doc_request', async (req, res) => {
   if (!hasValidHeaders(req.headers)) {
     return res.status(400).json({ error: 'Missing or invalid headers' });
+  }
+
+  if (!authorized(req.headers['authorization'])) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { documentType, redirect } = req.body;

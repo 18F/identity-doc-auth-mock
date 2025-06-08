@@ -28,4 +28,10 @@ const documentVerification = async (req, res) => {
   res.json(response_body);
 }
 
-module.exports = { documentVerification };
+const authorized = (apiKey) =>{
+  if (apiKey && apiKey === process.env.API_KEY) {
+    return true;
+  }
+  return false;
+}
+module.exports = { authorized, documentVerification };

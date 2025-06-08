@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { documentVerification } = require('../services/id_plus');
+const { authorized, documentVerification } = require('../services/id_plus');
 
 // Middleware to parse JSON bodies
 router.post('/', (req, res) => {
@@ -10,6 +10,10 @@ router.post('/', (req, res) => {
 
   if (!authHeader || !contentType || contentType !== 'application/json') {
     return res.status(400).json({ error: 'Missing or invalid headers' });
+  }
+
+  if (!authorized(authHeader)) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { modules } = req.body;
