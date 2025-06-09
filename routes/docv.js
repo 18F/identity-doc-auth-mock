@@ -27,7 +27,7 @@ router.post('/doc_request', async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { documentType, redirect } = req.body;
+  const { documentType, redirect } = req.body.config ;
 
   if (
     typeof documentType !== 'string' ||
@@ -48,7 +48,7 @@ router.post('/doc_request', async (req, res) => {
 
   try {
     if (url) {
-      new URL(url);
+      const idp_domain = new URL(url).origin;
       const data = {
         event: {
           created: new Date().toISOString(),
@@ -57,7 +57,8 @@ router.post('/doc_request', async (req, res) => {
           referenceId: 'the-reference-id'
         }
       }
-      await axios.post(url, data, {
+      const webhook_endpoint = `${idp_domain}${process.env.idp_webhook_path}`;
+      axios.post(webhook_endpoint, data, { // await removed - sending but hanging
         headers: {
           'Content-Type': 'application/json',
           'Authorization': process.env.webhook_secret
@@ -75,7 +76,9 @@ router.post('/doc_request', async (req, res) => {
   const domain = process.env.domain || 'http://localhost:3001';
   const path = `/docv/app/${docvTransactionToken}`;
   const appUrl = `${domain}${path}`;
-  return res.status(200).json({ data: { url: appUrl, docvTransactionToken } });
+
+  const response_body = { data: { url: appUrl, docvTransactionToken } };
+  return res.status(200).json(response_body);
 });
 
 module.exports = router;
