@@ -36,7 +36,7 @@ router.post('/doc_request', async (req, res) => {
     return res.status(400).json({ error: 'Invalid or missing documentType' });
   }
 
-  const { method = 'GET', url = 'http://localhost:3000/verify/socure/document_capture_update' } = redirect || {};
+  const { method = 'GET', url = process.env.DEFAULT_IDP_DOCV_CALLBACK_URL } = redirect || {};
 
   if (
     typeof method !== 'string' ||
@@ -57,12 +57,12 @@ router.post('/doc_request', async (req, res) => {
       }
     }
 
-    const webhook_endpoint = `${idpOrigin}${process.env.idp_webhook_path}`;
+    const webhook_endpoint = `${idpOrigin}${process.env.IDP_WEBHOOK_PATH}`;
     console.log('Sending webhook to:', webhook_endpoint);
     axios.post(webhook_endpoint, data, { // await removed - sending but hanging
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': process.env.webhook_secret
+        'Authorization': process.env.WEBHOOK_SECRET
       }
     });
   } catch (e) {
