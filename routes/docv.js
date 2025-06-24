@@ -36,7 +36,8 @@ router.post('/doc_request', async (req, res) => {
     return res.status(400).json({ error: 'Invalid or missing documentType' });
   }
 
-  const { method, url } = redirect || {};
+  const { method = 'GET', url = 'http://localhost:3000/verify/socure/document_capture_update' } = redirect || {};
+
   if (
     typeof method !== 'string' ||
     !['GET', 'POST'].includes(method)
@@ -45,27 +46,27 @@ router.post('/doc_request', async (req, res) => {
   }
 
   const docvTransactionToken = generateRandomString(12);
-
   try {
-    if (url) {
-      const idp_domain = new URL(url).origin;
-      const data = {
-        event: {
-          created: new Date().toISOString(),
-          docvTransactionToken,
-          eventType: 'DOCUMENTS_UPLOADED',
-          referenceId: 'the-reference-id'
-        }
+    const idpOrigin = new URL(url).origin;
+    const data = {
+      event: {
+        created: new Date().toISOString(),
+        docvTransactionToken,
+        eventType: 'DOCUMENTS_UPLOADED',
+        referenceId: 'the-reference-id'
       }
-      const webhook_endpoint = `${idp_domain}${process.env.idp_webhook_path}`;
-      axios.post(webhook_endpoint, data, { // await removed - sending but hanging
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': process.env.webhook_secret
-        }
-      });
     }
+
+    const webhook_endpoint = `${idpOrigin}${process.env.idp_webhook_path}`;
+    console.log('Sending webhook to:', webhook_endpoint);
+    axios.post(webhook_endpoint, data, { // await removed - sending but hanging
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': process.env.webhook_secret
+      }
+    });
   } catch (e) {
+    console.log('Error sending webhook:', e.message);
     return res.status(400).json({ error: 'Invalid redirect url' });
   }
 
@@ -73,11 +74,12 @@ router.post('/doc_request', async (req, res) => {
   const value = JSON.stringify({ documentType, redirect });
   await redisClient.setEx(docvTransactionToken, 60 * 60, value); // 3600 seconds = 60 minutes
 
-  const domain = process.env.domain || 'http://localhost:3001';
-  const path = `/docv/app/${docvTransactionToken}`;
-  const appUrl = `${domain}${path}`;
+  // const domain = process.env.domain || 'http://localhost:3001';
+  // const path = `/docv/app/${docvTransactionToken}`;
+  // const appUrl = `${domain}${path}`;
 
-  const response_body = { data: { url: appUrl, docvTransactionToken } };
+  // const response_body = { data: { url: appUrl, docvTransactionToken } };
+  const response_body = { data: { url, docvTransactionToken } };
   return res.status(200).json(response_body);
 });
 

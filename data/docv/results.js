@@ -68,7 +68,14 @@ const license_pass = {
   }
 };
 
+const randomDocumentPass = () =>{
+  const documentTypes = [passport_pass, license_pass];
+  // return at random
+  return documentTypes[Math.floor(Math.random() * documentTypes.length)];
+}
+
 module.exports = {
   passport_pass,
-  license_pass
+  license_pass,
+  randomDocumentPass,
 };

@@ -12,10 +12,6 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'Missing or invalid headers' });
   }
 
-  if (!authorized(authHeader)) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
   const { modules } = req.body;
 
   if (!Array.isArray(modules) &&
