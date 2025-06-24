@@ -10,7 +10,7 @@ const docvRoute = require('./routes/docv');
 app.use(express.json());
 
 // Mount the /id_plus route
-app.use('/id_plus/api/3.0/EmailAuthScore', idPlusRoute);
+app.use('/api/3.0/EmailAuthScore', idPlusRoute);
 
 app.use('/docv', docvRoute);
 

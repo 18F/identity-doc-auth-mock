@@ -74,11 +74,6 @@ router.post('/doc_request', async (req, res) => {
   const value = JSON.stringify({ documentType, redirect });
   await redisClient.setEx(docvTransactionToken, 60 * 60, value); // 3600 seconds = 60 minutes
 
-  // const domain = process.env.domain || 'http://localhost:3001';
-  // const path = `/docv/app/${docvTransactionToken}`;
-  // const appUrl = `${domain}${path}`;
-
-  // const response_body = { data: { url: appUrl, docvTransactionToken } };
   const response_body = { data: { url, docvTransactionToken } };
   return res.status(200).json(response_body);
 });
