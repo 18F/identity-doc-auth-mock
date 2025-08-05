@@ -14,9 +14,9 @@ router.post('/', (req, res) => {
 
   const { modules } = req.body;
 
-  if (!Array.isArray(modules) &&
-    modules.length !== 1 &&
-    modules[0] !== "documentverification"
+  if (!Array.isArray(modules) ||
+    modules.length !== 1 ||
+    modules[0] !== "documentVerification"
   ) {
     return res.status(400).json({ error: 'Invalid modules' });
   }
