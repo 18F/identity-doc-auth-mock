@@ -6,11 +6,13 @@ const app = express();
 const idPlusRoute = require('./routes/id_plus');
 const docvRoute = require('./routes/docv');
 const dosRoute = require('./routes/dos');
+const trustedRefereeRoute = require('./routes/trusted_referee');
 
 app.use(express.json());
 app.use('/api/3.0/EmailAuthScore', idPlusRoute);
 app.use('/docv', docvRoute);
 app.use('/dos', dosRoute);
+app.use('/trusted_referee', trustedRefereeRoute);
 
 if (process.env.NODE_ENV === 'test') {
   app.get('/error', (req, res, next) => {
