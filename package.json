@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "NODE_ENV=test mocha **/*.test.js --exit"
+    "test": "NODE_ENV=test mocha **/*.test.js --exit",
+    "lint": "eslint ."
   },
   "dependencies": {
     "axios": "^1.9.0",

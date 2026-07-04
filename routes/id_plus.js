@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { authorized, documentVerification } = require('../services/id_plus');
+const { documentVerification } = require('../services/id_plus');
 
 // Middleware to parse JSON bodies
 router.post('/', (req, res) => {

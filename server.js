@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
-  app.use((err, req, res, next) => {
+  app.use((err, req, res, _next) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
   });

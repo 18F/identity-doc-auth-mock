@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const proxyquire = require('proxyquire').noCallThru();
 
 describe('documentVerification', function () {
-  let req, res, redisStub, randomDocumentPassStub, licensePass, passportPass, documentVerification, authorizedStub;
+  let req, res, redisStub, randomDocumentPassStub, licensePass, passportPass, documentVerification;
 
   beforeEach(function () {
     // Stubs for result data
@@ -16,9 +16,6 @@ describe('documentVerification', function () {
       connect: sinon.stub().resolves(),
       get: sinon.stub()
     };
-
-    // Stub authorized
-    authorizedStub = sinon.stub();
 
     // Proxyquire the module with stubs
     ({ documentVerification } = proxyquire('../../services/id_plus', {
@@ -54,8 +51,6 @@ describe('documentVerification', function () {
   it('should return randomDocumentPass if not authorized', async function () {
     req.body = { docvTransactionToken: 'token' };
     req.headers['authorization'] = 'Bearer wrong-key';
-    // Patch authorized to return false
-    const origAuthorized = require('../../services/id_plus').authorized;
     sinon.stub(require('../../services/id_plus'), 'authorized').returns(false);
 
     await documentVerification(req, res);
@@ -71,8 +66,6 @@ describe('documentVerification', function () {
     req.headers['authorization'] = 'Bearer test-key';
     redisStub.get.resolves(JSON.stringify({ documentType: 'license' }));
 
-    // Patch authorized to return true
-    const origAuthorized = require('../../services/id_plus').authorized;
     sinon.stub(require('../../services/id_plus'), 'authorized').returns(true);
 
     await documentVerification(req, res);
@@ -87,8 +80,6 @@ describe('documentVerification', function () {
     req.headers['authorization'] = 'Bearer test-key';
     redisStub.get.resolves(JSON.stringify({ documentType: 'passport' }));
 
-    // Patch authorized to return true
-    const origAuthorized = require('../../services/id_plus').authorized;
     sinon.stub(require('../../services/id_plus'), 'authorized').returns(true);
 
     await documentVerification(req, res);
@@ -103,8 +94,6 @@ describe('documentVerification', function () {
     req.headers['authorization'] = 'Bearer test-key';
     redisStub.get.resolves(null);
 
-    // Patch authorized to return true
-    const origAuthorized = require('../../services/id_plus').authorized;
     sinon.stub(require('../../services/id_plus'), 'authorized').returns(true);
 
     await documentVerification(req, res);

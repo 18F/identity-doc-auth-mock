@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const hasValidHeaders = (headers) => {
+const hasValidHeaders = (_headers) => {
   return true; // contentType === 'application/json';
 };
 
