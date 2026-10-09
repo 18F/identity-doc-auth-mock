@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Fake Clear</title>
+  </head>
+  <body>
+    <h1>Clear Landing Page!</h1>
+    <p>You are being redirected in <span id="countdown">5</span> seconds...</p>
+
+    <script>
+      const targetUrl = "http://localhost:3000/verify/clear1/session_update";
+      let seconds = 5;
+
+      const interval = setInterval(() => {
+        seconds--;
+        document.getElementById("countdown").textContent = seconds;
+
+        if (seconds <= 0) {
+          clearInterval(interval);
+          window.location.href = targetUrl;
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>
