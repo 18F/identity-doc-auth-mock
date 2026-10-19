@@ -7,12 +7,14 @@ const idPlusRoute = require('./routes/id_plus');
 const docvRoute = require('./routes/docv');
 const dosRoute = require('./routes/dos');
 const trustedRefereeRoute = require('./routes/trusted_referee');
+const proofingAgentRoute = require('./routes/proofing_agent');
 
 app.use(express.json());
 app.use('/api/3.0/EmailAuthScore', idPlusRoute);
 app.use('/docv', docvRoute);
 app.use('/dos', dosRoute);
 app.use('/trusted_referee', trustedRefereeRoute);
+app.use('/proofing_agent', proofingAgentRoute);
 
 if (process.env.NODE_ENV === 'test') {
   app.get('/error', (req, res, next) => {
